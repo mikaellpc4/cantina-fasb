@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css"> <!-- a / faz com que o site use o publicDirectory definidio em app.js -->
+    <title> Cantina UNIFASB </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main>
+        <div class="image-side">
+            <img src="../images/primary-img.svg" alt="">
+        </div>
+        <div class="form-side">
+            <div class="form-side-container">  
+                <header>
+                    <h3>Cantina UNIFASB</h3>
+                    <h1>Cadastro de usuários</h1>
+                    <p>Já tem uma conta? <a href="/login.hbs">Entrar</a></p>
+                </header>
+                <form class="form" action="/auth/register" method="POST">
+                    <div class="form-items">
+                    <div class="form-item">
+                        <label for="name">Nome</label>
+                        <input type="text" id="name" name="name" placeholder="Digite seu nome" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="lastname">Sobrenome</label>
+                        <input type="text" id="lastname" name="lastname" placeholder="Digite seu sobrenome" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="email">Email</label>
+                        <input type="text" id="email" name="email" placeholder="Digite seu email" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="telefone">Telefone</label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="Digite seu telefone" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="confirm-password">Confirme sua senha</label>
+                        <input type="password" id="password-confirm" name="passwordConfirm" placeholder="Confirme sua senha" required>
+                    </div>
+                    </div>
+                    <button type="submit">Registrar</button>
+                </form>
+            </div>
+        </div>
+    </main>
+</body> 
+</html>
+
+Teste
+
+Arroz
+
+Batata
