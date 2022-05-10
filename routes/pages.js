@@ -2,8 +2,9 @@ const express = require('express');
 
 const router = express.Router();
 
+// Public Route
 router.get('/', (req, res) => {
-    res.render('index')
+    res.status(200).render('index') 
 });
 
 router.get('/login', (req, res) => {
