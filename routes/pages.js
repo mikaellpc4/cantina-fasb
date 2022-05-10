@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // Public Route
-router.get('/', (req, res) => {
+router.get('/', (req, res) =>    {
     res.status(200).render('index') 
 });
 

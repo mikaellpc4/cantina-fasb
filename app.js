@@ -31,16 +31,28 @@ app.use(express.urlencoded({ extended: false }))
 //Recebe os valores em forma de JSON
 app.use(express.json())
  
-db.getConnection( (error) => {
+db.getConnection( (error, connection) => {
     if(error) {
         console.log(error);
     }else{
+        db.query(
+                `
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY auto_increment,
+                    name varchar(100) NOT NULL,
+                    email varchar(255) NOT NULL,
+                    telefone INTEGER NOT NULL,
+                    password varchar(255) NOT NULL
+                  )
+                `
+        )
         console.log("MySQL OK!")
         app.listen(3000, () => {
             console.log("Server on")
             console.log("Port 3000") 
         });
     }
+    connection.release();
 });
 
 db.on('connect',function() {

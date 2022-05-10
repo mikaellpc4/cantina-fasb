@@ -22,7 +22,7 @@ exports.register = (req, res) => {
     const { name, lastname, email, telefone, password, passwordConfirm } = req.body;
     const fullname = name + ' ' + lastname
 
-    db.getConnection( (error) => {
+    db.getConnection( (error, connection) => {
         if(error) {
             console.log(error);
             return res.status(500).render('index',{
@@ -45,7 +45,7 @@ exports.register = (req, res) => {
                         message: 'As senhas não conferem'
                     });
                 }
-            
+
                 let hashedPassword = await bcrypt.hash(password, 8);
                 console.log(hashedPassword);
                 
@@ -60,7 +60,12 @@ exports.register = (req, res) => {
                     }
                 });
             })
+        }else{
+            return res.status(422).render('index',{
+                message: 'Preencha todos os campos'
+            });
         }
+        connection.release();
     }); 
 }
 
