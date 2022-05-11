@@ -1,0 +1,42 @@
+<div class="form-side">
+    <div class="form-side-container">
+      <header>
+        <div class="cantina-unifasb">
+            <h3>Cantina UNIFASB</h3>
+            <img src="/images/logo-unifasb.png" alt="Logo UNIFASB" />
+          </div>
+        <h1>Login de usuários</h1>
+        <p>Ainda não possui uma conta? <a href="/">Criar uma conta</a></p>
+      </header>
+      <form class="form" action="/auth/login" method="POST">
+        <div class="form-items">
+          <div class="form-item">
+            <label for="email">Email</label>
+            <input
+              type="text"
+              id="email"
+              name="email"
+              placeholder="Digite seu email"
+            />
+            <i class="icon-error"></i>
+            <small></small>
+          </div>
+          <div class="form-item">
+            <label for="password">Senha</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Digite sua senha"
+            />
+            <i class="icon-error"></i>
+            <small></small>
+          </div>
+        </div>
+        <button type="submit">Registrar</button>
+        <% if(messages.Status) { %>
+          <%= messages.Status %>
+        <% } %>
+      </form>
+    </div>
+  </div>

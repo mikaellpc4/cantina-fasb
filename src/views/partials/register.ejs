@@ -1,0 +1,88 @@
+<div class="form-side">
+    <div class="form-side-container">
+      <header>
+        <div class="cantina-unifasb">
+            <h3>Cantina UNIFASB</h3>
+            <img src="/images/logo-unifasb.png" alt="Logo UNIFASB" />
+          </div>
+        <h1>Cadastro de usuários</h1>
+        <p>Já tem uma conta? <a href="/login">Entrar</a></p>
+      </header>
+      <form class="form" action="/auth/register" method="POST">
+        <div class="form-items">
+          <div class="form-item">
+            <label for="name">Nome</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Digite seu nome"
+            />
+            <i class="icon-error"></i>
+            <small></small>
+          </div>
+          <div class="form-item">
+            <label for="lastname">Sobrenome</label>
+            <input
+              type="text"
+              id="lastname"
+              name="lastname"
+              placeholder="Digite seu sobrenome"
+            />
+            <i class="icon-error"></i>
+            <small></small>
+          </div>
+          <div class="form-item">
+            <label for="email">Email</label>
+            <input
+              type="text"
+              id="email"
+              name="email"
+              placeholder="Digite seu email"
+            />
+            <i class="icon-error"></i>
+            <small></small>
+          </div>
+          <div class="form-item">
+            <label for="celular">Celular</label>
+            <input
+              type="tel"
+              id="celular"
+              name="celular"
+              oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+              maxlength="11"
+              placeholder="(__) _____-____"
+            />
+            <i class="icon-error"></i>
+            <small></small>
+          </div>
+          <div class="form-item">
+            <label for="password">Senha</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Digite sua senha"
+            />
+            <i class="icon-error"></i>
+            <small></small>
+          </div>
+          <div class="form-item">
+            <label for="confirm-password">Confirme sua senha</label>
+            <input
+              type="password"
+              id="password-confirm"
+              name="passwordConfirm"
+              placeholder="Confirme sua senha"
+            />
+            <i class="icon-error"></i>
+            <small></small>
+          </div>
+        </div>
+        <button type="submit">Registrar</button>
+        <% if(messages.Status) { %>
+          <%= messages.Status %>
+        <% } %>
+      </form>
+    </div>
+  </div>
