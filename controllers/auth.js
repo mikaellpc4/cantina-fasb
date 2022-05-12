@@ -11,7 +11,7 @@ const db = mysql.createPool({
     database: process.env.DATABASE,
 });
 
-exports.register = (req, res) => {
+exports.register = async (req, res) => {
     console.log(req.body);
 
     // const name = req.body.name;
@@ -125,6 +125,54 @@ exports.register = (req, res) => {
     })
 }
 
-exports.login = (req, res) => {
-    res.status(200).json({ msg: 'Login' })
+exports.login = async (req, res) => {
+    console.log(req.body);
+    const { email, password } = req.body;
+
+    //Validação dos dados
+
+    if (!email) {
+        req.flash('Status', 'O email é obrigatório');
+        return res.status(422).render("pages/index", { page: 'login' })
+    }
+
+    validarEmail = (emailAdress) => {
+        return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailAdress)
+    }
+
+    if (validarEmail(email) == false) {
+        req.flash('Status', 'O email não é valido');
+        return res.status(422).render("pages/index", { page: 'login' })
+    }
+
+    db.query(`SELECT * FROM users WHERE email='${email}'`, async (error, results) => {
+        if (error) {
+            console.log(error);
+        }
+        if (results.length == 0) {
+            req.flash('Status', 'Seu email esta incorreto');
+            return res.status(404).render("pages/index", { page: 'register' })
+        }
+
+        const dbPassword = results[0].password
+        const userID = results[0].id
+
+        const checkPassword = await bcrypt.compare(password, dbPassword)
+
+        if (!checkPassword) {
+            req.flash('Status', 'Sua senha esta incorreta');
+            return res.status(404).render("pages/index", { page: 'register' })
+        }
+
+        const secret = process.env.SECRET
+        const token = jwt.sign(
+            {
+                id: userID,
+            },
+            secret,
+        )
+
+        return res.status(200).json({msg: "autenticado com sucesso",token})
+    })
+
 }

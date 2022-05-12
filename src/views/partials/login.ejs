@@ -36,7 +36,10 @@
         </div>
         <button type="submit"> Logar </button>
         <% if(messages.Status) { %>
-          <%= messages.Status %>
+          <div class="alert">
+            <%= messages.Status %>
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+          </div>
         <% } %>
       </form>
     </div>

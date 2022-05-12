@@ -40,9 +40,22 @@ app.use(express.urlencoded({ extended: false }))
 //Recebe os valores em forma de JSON
 app.use(express.json())
 
+
+//Public Route
 app.get('/', function(req, res) {
     res.render('pages/index');
 });
+
+//Private Route
+// app.get("/user/:id", async (req, res) => {
+
+//     const id = req.params.id
+
+//     // Verifica se usuario existe
+
+//     const user = await 
+
+// })
 
 
 //conexões com banco de dados
@@ -71,10 +84,6 @@ db.getConnection( (error, connection) => {
     }
     connection.release();
 });
-
-db.on('connect',function() {
-    console.log('Conexão estabelecida')
-})
 
 //Define Routes
 app.use('/auth', require('../routes/auth'));
