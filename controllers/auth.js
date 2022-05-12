@@ -151,7 +151,7 @@ exports.login = async (req, res) => {
         }
         if (results.length == 0) {
             req.flash('Status', 'Seu email esta incorreto');
-            return res.status(404).render("pages/index", { page: 'register' })
+            return res.status(422).render("pages/index", { page: 'login' })
         }
 
         const dbPassword = results[0].password
@@ -161,7 +161,7 @@ exports.login = async (req, res) => {
 
         if (!checkPassword) {
             req.flash('Status', 'Sua senha esta incorreta');
-            return res.status(404).render("pages/index", { page: 'register' })
+            return res.status(422).render("pages/index", { page: 'login' })
         }
 
         const secret = process.env.SECRET
@@ -172,7 +172,7 @@ exports.login = async (req, res) => {
             secret,
         )
 
-        return res.status(200).json({msg: "autenticado com sucesso",token})
+        return res.status(200).json({msg: `Você foi autenticado com o token: ${token}`})
     })
 
 }
