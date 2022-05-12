@@ -8,26 +8,30 @@
         <h1>Cadastro de usuários</h1>
         <p>Já tem uma conta? <a href="/login">Entrar</a></p>
       </header>
-      <form class="form" action="/auth/register" method="POST">
+      <form class="form" id="register" action="/auth/register" method="POST">
         <div class="form-items">
           <div class="form-item">
             <label for="name">Nome</label>
             <input
               type="text"
-              id="name"
-              name="name"
+              id="firstName"
+              name="firstName"
               placeholder="Digite seu nome"
+              onkeyup="saveValue(this)"
+              required
             />
             <i class="icon-error"></i>
             <small></small>
           </div>
           <div class="form-item">
-            <label for="lastname">Sobrenome</label>
+            <label for="lastName">Sobrenome</label>
             <input
               type="text"
-              id="lastname"
-              name="lastname"
+              id="lastName"
+              name="lastName"
               placeholder="Digite seu sobrenome"
+              onkeyup="saveValue(this)"
+              required
             />
             <i class="icon-error"></i>
             <small></small>
@@ -39,6 +43,8 @@
               id="email"
               name="email"
               placeholder="Digite seu email"
+              onkeyup="saveValue(this)"
+              required
             />
             <i class="icon-error"></i>
             <small></small>
@@ -52,6 +58,8 @@
               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
               maxlength="11"
               placeholder="(__) _____-____"
+              onkeyup="saveValue(this)"
+              required
             />
             <i class="icon-error"></i>
             <small></small>
@@ -63,25 +71,30 @@
               id="password"
               name="password"
               placeholder="Digite sua senha"
+              required
             />
             <i class="icon-error"></i>
             <small></small>
           </div>
           <div class="form-item">
-            <label for="confirm-password">Confirme sua senha</label>
+            <label for="passwordConfirm">Confirme sua senha</label>
             <input
               type="password"
-              id="password-confirm"
+              id="passwordConfirm"
               name="passwordConfirm"
               placeholder="Confirme sua senha"
+              required
             />
             <i class="icon-error"></i>
             <small></small>
           </div>
         </div>
-        <button type="submit">Registrar</button>
+        <button type="submit"">Registrar</button>
         <% if(messages.Status) { %>
-          <%= messages.Status %>
+          <div class="alert">
+            <%= messages.Status %>
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+          </div>
         <% } %>
       </form>
     </div>

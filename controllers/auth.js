@@ -20,49 +20,109 @@ exports.register = (req, res) => {
     // const password = req.body.password;
     // const passwordConfirm = req.body.passwordConfirm;
 
-    const { name, lastname, email, celular, password, passwordConfirm } = req.body;
-    const fullname = name + ' ' + lastname
+    const { firstName, lastName, email, celular, password, passwordConfirm } = req.body;
+    const fullname = firstName + ' ' + lastName
 
-    db.getConnection((error, connection) => {
+
+    db.getConnection(async (error, connection) => {
+
+        //Verifica conexão com o banco de dados
         if (error) {
             console.log(error);
-            req.flash('Status', 'Falha no banco de dados');
-            return res.status(500).render("pages/index",{page:'login'})
-        } else if (name && lastname && email && celular && password && passwordConfirm) {
-            db.query('SELECT email FROM users WHERE email = ?', [email], async (error, results) => {
+            req.flash('Status', 'Ocorreu um erro do nosso lado, tente novamente');
+            return res.status(500).render("pages/index", { page: 'register' })
+        }
+
+        //Validação de dados
+        if (!firstName) {
+            req.flash('Status', 'O nome é obrigatório');
+            return res.status(422).render("pages/index", { page: 'register' })
+        }
+
+        if (firstName < 3) {
+            req.flash('Status', 'O nome deve possuir no minimo 3 caracters');
+            return res.status(422).render("pages/index", { page: 'register' })
+        }
+
+
+        if (!lastName) {
+            req.flash('Status', 'O sobrenome é obrigatório');
+            return res.status(422).render("pages/index", { page: 'register' })
+        }
+
+        if (lastName < 3) {
+            req.flash('Status', 'O sobrenome precisa ter no minimo 3 caracters');
+            return res.status(422).render("pages/index", { page: 'register' })
+        }
+
+        if (!email) {
+            req.flash('Status', 'O email é obrigatório');
+            return res.status(422).render("pages/index", { page: 'register' })
+        }
+
+        validarEmail = (emailAdress) => {
+            return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailAdress)
+        }
+
+        if (validarEmail(email) == false) {
+            req.flash('Status', 'O email não é valido');
+            return res.status(422).render("pages/index", { page: 'register' })
+        }
+
+
+        if (!celular) {
+            req.flash('Status', 'O numero de celular é obrigatório');
+            return res.status(422).render("pages/index", { page: 'register' })
+        }
+
+        validarCelular = (numeroCell) => {
+            return /^[0-9]{10,11}$/.test(numeroCell)
+        }
+
+        if (validarCelular(celular) == false) {
+            req.flash('Status', 'O numero de celular não é valido');
+            return res.status(422).render("pages/index", { page: 'register' })
+        }
+
+
+        if (password !== passwordConfirm) {
+            req.flash('Status', 'As senhas não conferem');
+            return res.status(422).render("pages/index", { page: 'register' })
+        }
+
+        let hashedPassword = await bcrypt.hash(password, 12);
+
+
+        db.query(`SELECT email FROM users WHERE email='${email}'`, async (error, results) => {
+            if (error) {
+                console.log(error);
+            }
+            if (results.length > 0) {
+                req.flash('Status', 'Este email ja esta cadastrado');
+                return res.status(422).render("pages/index", { page: 'register' })
+            }
+
+            db.query(`SELECT celular FROM users WHERE celular='${celular}'`, async (error, results) => {
                 if (error) {
                     console.log(error);
                 }
-                //results é recebido em forma de array
                 if (results.length > 0) {
-                    console.log('email ja utilizado')
-                    req.flash('Status', 'Email ja em uso');
-                    return res.status(422).render("pages/index",{page:'register'})
-                } else if (password !== passwordConfirm) {
-                    console.log('senhas não conferem')
-                    req.flash('Status', 'Senhas não conferem');
-                    return res.status(422).render("pages/index",{page:'register'})
+                    req.flash('Status', 'Este numero de celular ja esta cadastrado');
+                    return res.status(422).render("pages/index", { page: 'register' })
                 }
 
-                let hashedPassword = await bcrypt.hash(password, 12);
-                console.log(hashedPassword);
-
-                db.query('INSERT INTO users SET ?', { name: fullname, email: email, celular: celular, password: hashedPassword }, (error, results) => {
+                db.query('INSERT INTO users SET ?', { name: fullname, email: email, celular: celular, password: hashedPassword }, async (error) => {
                     if (error) {
-                        console.log(error);
-                    } else {
-                        console.log('Usuario Registrado')
-                        req.flash('Status', 'Registrado com sucesso');
-                        return res.status(200).render("pages/index", { page: 'login' });
+                        console.log(error)
                     }
+                    req.flash('Status', 'Registrado com sucesso');
+                    return res.status(200).render("pages/index", { page: 'login' });
                 });
             })
-        } else {
-            req.flash('Status', 'Faltam dados');
-            return res.status(422)
-        }
+        })
+
         connection.release();
-    });
+    })
 }
 
 exports.login = (req, res) => {

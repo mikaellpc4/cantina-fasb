@@ -1,10 +1,17 @@
 const form = document.querySelector('form')
 const formItems = document.querySelectorAll('[placeholder]')
 
-const [username, lastName, email, phone, password, passwordConfirmation] =
-  formItems
+
+if (form.id == 'register'){
+  const [firstName, lastName, email, celular, password, passwordConfirm] = formItems
+}else{
+  const [email,password] = formItems
+}
+
 
 form.addEventListener('submit', event => {
+  //event.preventDefault()
+  //Criar uma forma de checkar se os dados estão sendo enviados corretamente antes de permitir o envio
   for (let item of formItems) {
     checkInputs(item)
   }
@@ -12,9 +19,6 @@ form.addEventListener('submit', event => {
 
 for (let item of formItems) {
   item.addEventListener('focusout', () => {
-    checkInputs(item)
-  })
-  item.addEventListener('blur', () => {
     checkInputs(item)
   })
 }
@@ -27,14 +31,27 @@ function checkInputs(item) {
     setSuccess(item)
   }
 
-  // Verifica se o nome tem menos de 3 caracteres
-  if (username.value.length > 0 && username.value.length < 3) {
-    setError(username, 'O nome precisa ter no mínimo 3 letras.')
-  }
+  if (form.id == 'register') {
+    // Verifica se o nome tem menos de 3 caracteres
+    if (firstName.value.length > 0 && firstName.value.length < 3) {
+      setError(firstName, 'O nome precisa ter no mínimo 3 letras.')
+    }
+    // Verifica se o sobrenome tem menos de 3 caracteres
+    if (lastName.value.length > 0 && lastName.value.length < 3) {
+      setError(lastName, 'O sobrenome precisa ter no mínimo 3 letras.')
+    }
+    // Verifica se o número de celular é válido
+    if (celular.value.length > 0 && celular.value.length < 11) {
+      setError(celular, 'Insira um número de celular válido.')
+    }
 
-  // Verifica se o sobrenome tem menos de 3 caracteres
-  if (lastName.value.length > 0 && lastName.value.length < 3) {
-    setError(lastName, 'O sobrenome precisa ter no mínimo 3 letras.')
+    // Verifica se as senhas são iguais
+    if (
+      passwordConfirm.value.length > 0 &&
+      passwordConfirm.value !== password.value
+    ) {
+      setError(passwordConfirm, 'As senhas não conferem.')
+    }
   }
 
   // Verifica se o email é válido
@@ -47,18 +64,6 @@ function checkInputs(item) {
     setError(password, 'A senha precisa ter no mínimo 8 caracteres.')
   }
 
-  // Verifica se o número de celular é válido
-  if (phone.value.length > 0 && phone.value.length < 11) {
-    setError(phone, 'Insira um número de celular válido.')
-  }
-
-  // Verifica se as senhas são iguais
-  if (
-    passwordConfirmation.value.length > 0 &&
-    passwordConfirmation.value !== password.value
-  ) {
-    setError(passwordConfirmation, 'As senhas não conferem.')
-  }
 }
 
 function setError(input, message) {
@@ -77,9 +82,31 @@ function setSuccess(input) {
   formItem.classList.remove('error')
 }
 
+checkCelular = (cellNumber) => {
+  return (/^[0-9]{10,11}$/.test(cellNumber))
+}
+
 // Retorna true se o email for válido e false se o email for inválido:
 function checkEmail(email) {
-  return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-    email
-  )
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
 }
+
+
+//Save the value function - save it to localStorage as (ID, VALUE)
+function saveValue(e) {
+  var id = e.id;  // get the sender's id to save it . 
+  var val = e.value; // get the value. 
+  sessionStorage.setItem(id, val);// Every time user writing something, the localStorage's value will override . 
+}
+
+for (let item of formItems) {
+  document.getElementById(item.id).value = getSavedValue(item.id);    // set the value to this input
+}
+
+//get the saved value function - return the value of "v" from localStorage. 
+function getSavedValue(v) {
+  if (!sessionStorage.getItem(v)) {
+    return "";// You can change this to your defualt value. 
+  }
+  return sessionStorage.getItem(v);
+};
