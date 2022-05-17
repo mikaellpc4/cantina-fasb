@@ -2,36 +2,33 @@
 // Normalmente é necessario reiniciar o servidor para ver as mudanças
 
 const express = require('express'); //express é responsavel por iniciar o app pelo NodeJS
+const cookieParser = require('cookie-parser');
 const path = require('path');
-const mysql = require('mysql'); 
-const dotenv = require('dotenv');
-const route = require('./route');
+const route = require('../routes/route');
 const flash = require('express-flash');
 const session = require('express-session');
-
-dotenv.config({ path: './.env'});
+const db = require('../routes/database')
 
 const app = express(); //inicia o servidor
-//Em caso de servidor web alterar isso
-const db = mysql.createPool({
-    connectionLimit : 10,
-    host: process.env.DATABASE_HOST,
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE,
-});
+//Em caso de servidor web alterar isso 
 
-app.use(session({ cookie: { maxAge: 60000 }, 
+//Configuração do Flash para enviar mensagens   
+app.use(session({
+    cookie: { maxAge: 60000 },
     secret: 'woot',
-    resave: false, 
-    saveUninitialized: false}));
+    resave: false,
+    saveUninitialized: false
+}));
 app.use(flash());
 
 const publicDirectory = path.join(__dirname, '../public'); //Aonde ficara os JS e CSS da pagina
-                                 //dirname = pega o acesso do diretorio atual aonde está
+//dirname = pega o acesso do diretorio atual aonde está
 app.use(express.static(publicDirectory)); //faz com que o programa use o publicDirectory como acesso
 app.set('view engine', 'ejs'); //ejs é a view engine que sera usada para exibir o HTML
 app.set('views', path.join(__dirname, 'views'))
+
+app.use(cookieParser());
+
 app.use(route)
 
 //Envia os dados recebidos pelo HTML via forms
@@ -40,11 +37,8 @@ app.use(express.urlencoded({ extended: false }))
 //Recebe os valores em forma de JSON
 app.use(express.json())
 
-
-//Public Route
-app.get('/', function(req, res) {
-    res.render('pages/index');
-});
+//Define Routes
+app.use('/auth', require('../routes/auth'));
 
 //Private Route
 // app.get("/user/:id", async (req, res) => {
@@ -57,33 +51,54 @@ app.get('/', function(req, res) {
 
 // })
 
-
 //conexões com banco de dados
-
-db.getConnection( (error, connection) => {
-    if(error) {
-        console.log(error);
-    }else{
-        db.query(
-                `
-                CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY auto_increment,
-                    name varchar(100) NOT NULL,
-                    email varchar(255) NOT NULL,
-                    celular varchar(255) NOT NULL,
-                    password varchar(255) NOT NULL,
-                    validated tinyint(1) NOT NULL DEFAULT 0
-                  )
-                `
-        )
-        console.log("MySQL OK!")
-        app.listen(3000, () => {
-            console.log("app on")
-            console.log("Port 3000") 
-        });
+const checkTableExist = async () => {
+    try {
+        const results = await db.query(`SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'users'`);
+        if (results.rows.length > 0) {
+            return true
+        }
+        return false
     }
-    connection.release();
-});
+    catch (err) {
+        console.log(err);
+    }
+}
 
-//Define Routes
-app.use('/auth', require('../routes/auth'));
+const createTable = async () => {
+    try {
+        await db.connect();
+        try {
+            if (await checkTableExist() == false) {
+                console.log('Table not found, creating a new table')
+                await db.query(`CREATE TABLE users (
+                     id SERIAL PRIMARY KEY,
+                     role varchar(100) NOT NULL,
+                     name varchar(100) NOT NULL,
+                     email varchar(100) NOT NULL UNIQUE,
+                     celular varchar(11) NOT NULL UNIQUE,
+                     password varchar(255) NOT NULL,
+                     validated boolean NOT NULL DEFAULT false
+                 )`)
+                return
+            }
+        }
+        finally {
+            console.log('PostgreSQL OK!')
+        }
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+
+const start = async() => {
+    console.log('------------------------------------------------------------------------------')
+    await createTable()
+    app.listen(3000, () => {
+        console.log("App ON")
+        console.log("Port 3000")
+    })
+}
+
+start()

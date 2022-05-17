@@ -1,48 +1,36 @@
 <div class="form-side">
-    <div class="form-side-container">
-      <header>
-        <div class="cantina-unifasb">
-            <h3>Cantina UNIFASB</h3>
-            <img src="/images/logo-unifasb.png" alt="Logo UNIFASB" />
-          </div>
-        <h1>Login de usuários</h1>
-        <p>Ainda não possui uma conta? <a href="/">Criar uma conta</a></p>
-      </header>
-      <form class="form" id="login" onsubmit="dataCheck(this)" action="/auth/login" method="POST">
-        <div class="form-items">
-          <div class="form-item">
-            <label for="email">Email</label>
-            <input
-              type="text"
-              id="email"
-              name="email"
-              placeholder="Digite seu email"
-              onfocusout="saveValue(this)"
-              required
-            />
-            <i class="icon-error"></i>
-            <small></small>
-          </div>
-          <div class="form-item">
-            <label for="password">Senha</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Digite sua senha"
-              required
-            />
-            <i class="icon-error"></i>
-            <small></small>
-          </div>
+  <div class="form-side-container">
+    <header>
+      <div class="cantina-unifasb">
+        <h3>Cantina UNIFASB</h3>
+        <img src="/images/logo-unifasb.png" alt="Logo UNIFASB" />
+      </div>
+      <h1>Login de usuários</h1>
+      <p>Ainda não possui uma conta? <a href="/">Criar uma conta</a></p>
+    </header>
+    <form class="form" id="login" onsubmit="dataCheck(this)" action="/auth/login" method="POST">
+      <div class="form-items">
+        <div class="form-item">
+          <label for="email">Email</label>
+          <input type="text" id="email" name="email" placeholder="Digite seu email" onfocusout="saveValue(this)"
+            required />
+          <i class="icon-error"></i>
+          <small></small>
         </div>
-        <button type="submit"> Logar </button>
-        <% if(messages.Status) { %>
-          <div class="alert">
-            <%= messages.Status %>
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-          </div>
-        <% } %>
-      </form>
-    </div>
+        <div class="form-item">
+          <label for="password">Senha</label>
+          <input type="password" id="password" name="password" placeholder="Digite sua senha" required />
+          <i class="icon-error"></i>
+          <small></small>
+        </div>
+      </div>
+      <button type="submit"> Logar </button>
+      <% if(messages.Status) { %>
+        <div class=" alert red">
+          <%= messages.Status %>
+          <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        </div>
+      <% } %>
+    </form>
   </div>
+</div>

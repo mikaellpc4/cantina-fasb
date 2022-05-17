@@ -92,12 +92,16 @@ main {
   font-size: 1.4rem;
 }
 
-.form-side header p a {
+a {
   text-decoration: none;
-  color: var(--primary-blue);
 }
 
-.form-side header p a:hover {
+.form-side header p a{
+  color: var(--primary-blue);
+
+}
+
+a:hover {
   text-decoration: underline;
 }
 
@@ -196,10 +200,17 @@ main {
  /* The alert message box */
  .alert {
   padding: 1rem;
-  background-color: #f44336; /* Red */
   color: white;
   margin-bottom: 0.7rem;
   border-radius: 0.4rem;
+}
+
+.red{
+  background-color: #f44336
+}
+
+.green{
+  background-color: green;
 }
 
 /* The close button */
@@ -218,3 +229,9 @@ main {
 .closebtn:hover {
   color: black;
 } 
+
+
+/* SHOP */
+header nav{
+  display:flex;
+}
