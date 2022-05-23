@@ -1,6 +1,8 @@
 const db = require('../routes/database')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const ApiError = require('../controllers/errorController')
+const { creatAcessToken, creatRefreshToken} = require('../src/token')
 
 const cellExist = async (cellNum) => {
     results = await db.query(`SELECT celular FROM users WHERE celular='${cellNum}'`)
@@ -11,13 +13,12 @@ const cellExist = async (cellNum) => {
 }
 
 const emailExist = async (emailAdress) => {
-    results = await db.query(`SELECT email FROM users WHERE email='${emailAdress}'`)
+    results = await db.query(`SELECT email FROM users WHERE email ILIKE '${emailAdress}'`)
     if (results.rows.length > 0) {
         return true
     }
     return false
 }
-
 
 exports.register = async (req, res) => {
     // const name = req.body.name;
@@ -31,29 +32,29 @@ exports.register = async (req, res) => {
 
     //Validação de dados
     if (!firstName) {
-        req.flash('Status', 'O nome é obrigatório');
-        return res.status(422).render("pages/index", { page: 'register' })
+        ApiError.badRequest(req, 'O nome é obrigatorio')
+        return res.render("pages/index", { page: 'register' })
     }
 
     if (firstName < 3) {
-        req.flash('Status', 'O nome deve possuir no minimo 3 caracters');
-        return res.status(422).render("pages/index", { page: 'register' })
+        ApiError.badRequest(req, 'O nome deve possuir no minimo 3 caracters')
+        return res.render("pages/index", { page: 'register' })
     }
 
 
     if (!lastName) {
-        req.flash('Status', 'O sobrenome é obrigatório');
-        return res.status(422).render("pages/index", { page: 'register' })
+        ApiError.badRequest(req, 'O sobrenome é obrigatorio')
+        return res.render("pages/index", { page: 'register' })
     }
 
     if (lastName < 3) {
-        req.flash('Status', 'O sobrenome precisa ter no minimo 3 caracters');
-        return res.status(422).render("pages/index", { page: 'register' })
+        ApiError.badRequest(req, 'O sobrenome precisa ter no minimo 3 caracters')
+        return res.render("pages/index", { page: 'register' })
     }
 
     if (!email) {
-        req.flash('Status', 'O email é obrigatório');
-        return res.status(422).render("pages/index", { page: 'register' })
+        ApiError.badRequest(req, 'O email é obrigatório')
+        return res.render("pages/index", { page: 'register' })
     }
 
     validarEmail = (emailAdress) => {
@@ -61,18 +62,18 @@ exports.register = async (req, res) => {
     }
 
     if (validarEmail(email) == false) {
-        req.flash('Status', 'O email não é valido');
-        return res.status(422).render("pages/index", { page: 'register' })
+        ApiError.badRequest(req, 'O email não é valido')
+        return res.render("pages/index", { page: 'register' })
     }
 
     if (await emailExist(email) == true) {
-        req.flash('Status', 'Este email ja foi registrado');
-        return res.status(422).render("pages/index", { page: 'register' })
+        ApiError.badRequest(req, 'Este email ja foi registrado');
+        return res.render("pages/index", { page: 'register' });
     }
 
     if (!celular) {
-        req.flash('Status', 'O numero de celular é obrigatório');
-        return res.status(422).render("pages/index", { page: 'register' })
+        ApiError.badRequest(req, 'O numero de celular é obrigatório');
+        return res.render("pages/index", { page: 'register' });
     }
 
     validarCelular = (numeroCell) => {
@@ -80,17 +81,17 @@ exports.register = async (req, res) => {
     }
 
     if (validarCelular(celular) == false) {
-        req.flash('Status', 'O numero de celular não é valido');
-        return res.status(422).render("pages/index", { page: 'register' })
+        ApiError.badRequest(req, 'O numero de celular não é valido');
+        return res.render("pages/index", { page: 'register' })
     }
 
     if (await cellExist(celular) == true) {
-        req.flash('Status', 'O numero de celular ja esta sendo usado');
-        return res.status(422).render("pages/index", { page: 'register' })
+        ApiError.badRequest(req, 'O numero de celular ja esta sendo usado');
+        return res.render("pages/index", { page: 'register' })
     }
 
     if (password != passwordConfirm) {
-        req.flash('Status', 'As senhas não conferem');
+        ApiError.badRequest(req, 'As senhas não conferem');
         return res.status(422).render("pages/index", { page: 'register' })
     }
 
@@ -99,17 +100,16 @@ exports.register = async (req, res) => {
     db.query(`INSERT INTO users (role,name,email,celular,password) VALUES ('user','${fullname}','${email}','${celular}','${hashedPassword}')`)
     req.flash('Status', 'Registrado com sucesso');
     return res.status(200).render("pages/index", { page: 'login' });
+
 }
 
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
-    //Validação dos dados
-
     if (!email) {
-        req.flash('Status', 'O email é obrigatório');
-        return res.status(422).render("pages/index", { page: 'login' })
+        ApiError.badRequest(req, 'Falta o email')
+        return res.render("pages/index", { page: 'login' })
     }
 
     validarEmail = (emailAdress) => {
@@ -117,37 +117,42 @@ exports.login = async (req, res) => {
     }
 
     if (validarEmail(email) == false) {
-        req.flash('Status', 'O email não é valido');
-        return res.status(422).render("pages/index", { page: 'login' })
+        ApiError.badRequest(req, 'O email não é valido')
+        return res.render("pages/index", { page: 'login' })
+    }
+    const results = await db.query(`SELECT * FROM users WHERE email ILIKE '${email}'`)
+    if (results.rows.length == 0) {
+        ApiError.badRequest(req, 'Seu email ou senha estão incorretos')
+        return res.render("pages/index", { page: 'login' })
+    }
+    const dbPassword = results.rows[0].password
+    const userID = results.rows[0].id
+    const userRole = results.rows[0].role
+
+    const checkPassword = await bcrypt.compare(password, dbPassword)
+
+    if (!checkPassword) {
+        ApiError.badRequest(req, 'Sua enha esta incorreta')
+        return res.render("pages/index", { page: 'login' })
     }
 
-    try {
-        const results = await db.query(`SELECT * FROM users WHERE email='${email}'`)
-        if (results.length == 0) {
-            req.flash('Status', 'Seu email esta incorreto');
-            return res.status(422).render("pages/index", { page: 'login' })
-        }
-        const dbPassword = results.rows[0].password
-        const userID = results.rows[0].id
+    const acessToken = creatAcessToken(userID, userRole)
+    const refreshToken = await creatRefreshToken(userID, userRole)
 
-        const checkPassword = await bcrypt.compare(password, dbPassword)
 
-        if (!checkPassword) {
-            req.flash('Status', 'Sua senha esta incorreta');
-            return res.status(422).render("pages/index", { page: 'login' })
-        }
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        // maxAge: 1000000,
+        // signed: true
+    })
+    res.cookie("acessToken", acessToken, {
+        httpOnly: true,
+        secure: true,
+        // maxAge: 1000000,
+        // signed: true
+    })
+    
 
-        const secret = process.env.SECRET
-        const token = jwt.sign( { id: userID } ,secret, {expiresIn: "1h"})
-        res.cookie("token", token, {
-            httpOnly: true,
-            // secure: true,
-            // maxAge: 1000000,
-            // signed: true
-        })
-        return res.status(200).redirect("/shop")
-    }
-    catch (err) {
-        console.log(err)
-    }
-}
+    return res.status(200).redirect('/shop')
+}   

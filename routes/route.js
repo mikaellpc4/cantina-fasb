@@ -2,8 +2,11 @@ const express = require('express');
 const route = express.Router();
 const { cookieJwTAuth } = require("../middleware/cookieJwTAuth")
 const db = require('../routes/database')
+const authController = require('../controllers/auth')
 
 
+const use = fn => (req,res,next) =>
+    Promise.resolve(fn(req, res, next)).catch(next)
 
 // Public Route
 route.get('/', (req, res) => {
@@ -27,30 +30,25 @@ route.get('/user/logout', async (req, res) => {
     res.status(200).clearCookie("token").redirect("/login");
 })
 
-route.get('/user/:id', cookieJwTAuth, async (req, res) => {
-
+route.get('/user/:id', use(cookieJwTAuth), async (req, res) => {
+    // throw Error('Mikael')
     const id = req.params.id
     const getUser = async () => {
-        try {
-            const user = await db.query(`SELECT id,role,name,email,celular,validated FROM users WHERE id='${id}'`)
-            return user.rows[0]
-        }
-        catch (err) {
-            console.log(err);
-        }
+        const user = await db.query(`SELECT id,role,name,email,celular,validated FROM users WHERE id='${id}'`)
+        return user.rows[0]
     }
     const data = await getUser()
     if(data && data.id == id){
         return res.status(200).json({msg: "user found"})
     }
     return res.status(404).json({msg: "user not found"})
-    // if(user = 0){
-    //     console.log
-    // }
 })
 
-route.get('/shop', cookieJwTAuth, (req, res) => res.render("pages/shop", {page: 'produtos'}))
-route.get('/shop/pedidos', cookieJwTAuth, (req, res) => res.render("pages/shop", {page: 'pedidos'}))
-route.get('/shop/pedidos/historico_de_pedidos', cookieJwTAuth, (req, res) => res.render("pages/shop", {page: 'historico de pedidos'}))
+route.get('/shop', use(cookieJwTAuth), (req, res) => res.render("pages/shop", {page: 'produtos'}))
+route.get('/shop/pedidos', use(cookieJwTAuth), (req, res) => res.render("pages/shop", {page: 'pedidos'}))
+route.get('/shop/pedidos/historico_de_pedidos', use(cookieJwTAuth), (req, res) => res.render("pages/shop", {page: 'historico de pedidos'}))
+
+route.post('/register', use(authController.register))
+route.post('/login', use(authController.login ))
 
 module.exports = route

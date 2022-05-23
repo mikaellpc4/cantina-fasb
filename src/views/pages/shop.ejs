@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,17 +8,30 @@
     <link rel="stylesheet" href="/style.css" />
     <title> SHOP </title>
 </head>
-<body>
-    <header>
-        <nav>
-            <p><a href="/shop"> Produtos </a></p>
-            <p><a href="/shop/pedidos"> Pedidos </a></p>
-            <p><a href="/shop/pedidos/historico_de_pedidos"> Historico de pedidos </a></p>
-            <a href="/user/logout">Deslogar</a>
-        </nav>
-    </header>
+
+<body class="shop">
     <main>
-        <%- include(`../partials/${page}`); %>
+        <header>
+            <nav>
+                <a href="/" class="logo"> <img src="/images/logo-unifasb.png" alt="Logo UNIFASB" width="60" /> </a>
+                <div class="mobile-menu" id="menu">
+                    <div class="line1"></div>
+                    <div class="line2"></div>
+                    <div class="line3"></div>
+                </div>
+                <ul class="shop-nav-list">
+                    <li> <a href="/shop"> Produtos </a> </li>
+                    <li> <a href="/shop/pedidos"> Pedidos </a> </li>
+                    <li> <a href="/shop/pedidos/historico_de_pedidos"> Historico de pedidos </a> </li>
+                    <li> <a href="/user/logout"> Sair </a> </li>
+                </ul>
+            </nav>
+        </header>
+        <section>
+            <%- include(`../partials/${page}`); %>
+        </section>
     </main>
+    <script src="/shop.js"></script>
 </body>
+
 </html>

@@ -8,7 +8,7 @@
     "start": "nodemon --inspect src/app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Mikaellpc4",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -19,7 +19,9 @@
     "express-flash": "^0.0.2",
     "express-session": "^1.17.2",
     "jsonwebtoken": "^8.5.1",
-    "nodemon": "^2.0.16",
     "pg": "^8.7.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
   }
 }
