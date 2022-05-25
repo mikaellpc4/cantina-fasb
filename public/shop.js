@@ -12,10 +12,10 @@ class MobileNavBar {
 
     animateLinks() {
         this.navLinks.forEach((link, index) => {
-            if(lock > 0){
+            if (lock > 0) {
                 link.style.opacity = 1
                 return
-            }else{
+            } else {
                 link.style.opacity = 0
             }
             if (!link.style.animation) {
@@ -58,3 +58,22 @@ if (window.matchMedia("(max-width:1020px)").matches) {
     lock = 2
     mobileNavBar.handleClick(true)
 }
+
+const search = () => {
+    const inputValue = document.getElementById("search").value.toUpperCase()    
+    const products = document.getElementsByClassName("productCard")
+    for( i = 0; i < products.length; i++ ) {
+        if(!products[i].innerHTML.toUpperCase().includes(inputValue)) {
+            products[i].style.display = "none"
+        }else{
+            products[i].style.display = "initial"
+        }
+    }
+}
+
+
+const searchInit = () => {
+    document.getElementById("search").addEventListener("keyup", search)
+}
+
+searchInit();

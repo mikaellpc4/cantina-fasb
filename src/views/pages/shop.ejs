@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="fonts/style.css" />
     <title> SHOP </title>
 </head>
 
@@ -14,6 +15,11 @@
         <header>
             <nav>
                 <a href="/" class="logo"> <img src="/images/logo-unifasb.png" alt="Logo UNIFASB" width="60" /> </a>
+                <div class="search">
+                    <i class="icon-search"></i>
+                    <input type="search" placeholder="Pesquisar" id="search">
+                    <i class="icon-cross"></i>
+                </div>
                 <div class="mobile-menu" id="menu">
                     <div class="line1"></div>
                     <div class="line2"></div>
@@ -31,7 +37,7 @@
             <%- include(`../partials/${page}`); %>
         </section>
     </main>
-    <script src="/shop.js"></script>
+    <script src="shop.js"></script>
 </body>
 
 </html>

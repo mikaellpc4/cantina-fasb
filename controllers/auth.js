@@ -132,7 +132,7 @@ exports.login = async (req, res, next) => {
     const checkPassword = await bcrypt.compare(password, dbPassword)
 
     if (!checkPassword) {
-        ApiError.badRequest(req, 'Sua enha esta incorreta')
+        ApiError.badRequest(req, 'Sua senha esta incorreta')
         return res.render("pages/index", { page: 'login' })
     }
 

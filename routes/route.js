@@ -3,6 +3,7 @@ const route = express.Router();
 const { cookieJwTAuth } = require("../middleware/cookieJwTAuth")
 const db = require('../routes/database')
 const authController = require('../controllers/auth')
+const {deleteRefreshToken} = require('../src/token')
 
 
 const use = fn => (req,res,next) =>
@@ -10,24 +11,26 @@ const use = fn => (req,res,next) =>
 
 // Public Route
 route.get('/', (req, res) => {
-    const token = req.cookies.token
-    if(token){
+    const refreshToken = req.cookies.refreshToken
+    if(refreshToken){
         return res.status(200).redirect("/shop")
     }
     res.render("pages/index", { page: 'register' });
 })
 
 route.get('/login', (req, res) => {
-    const token = req.cookies.token
-    if(token){
+    const refreshToken = req.cookies.refreshToken
+    if(refreshToken){
         return res.status(200).redirect("/shop")
     }
     res.render("pages/index", { page: 'login' });
 })
 
 route.get('/user/logout', async (req, res) => {
+    const refreshToken = req.cookies.refreshToken
+    deleteRefreshToken(refreshToken)
     req.flash('Status', 'Você se deslogou');
-    res.status(200).clearCookie("token").redirect("/login");
+    res.status(200).clearCookie("refreshToken").redirect("/login");
 })
 
 route.get('/user/:id', use(cookieJwTAuth), async (req, res) => {

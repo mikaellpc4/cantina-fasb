@@ -16,16 +16,18 @@
   --light-gray: hsla(0, 0%, 96%, 0.94);
 }
 
-body {
+*{
   font-size: 1.6rem;
   font-family: 'Roboto', sans-serif;
+}
+body {
   width: 100%;
   height: 100vh;
   overflow-y: scroll;
   position: relative;
 }
 
-main {
+main.login {
   width: 100%;
   height: 100vh;
   display: flex;
@@ -304,9 +306,80 @@ a:hover {
 }
 
 .shop section{
+  padding: 1rem;
   margin: .5rem;
   margin-top:7.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+  grid-gap: 2rem;
 }
+.productCard{
+  max-width: 35rem;
+  display: grid;
+  padding: 2em;
+  border-radius: .3em; 
+  box-shadow: 1rem 1rem 3rem rgba(0,0,0,0.1);
+  background: rgb(250, 250, 250);
+}
+
+.productCard img{
+  width: 100%;
+  height: auto;
+} 
+
+.shop .search{
+  display:flex;
+  align-items: center;
+  background: hsl(36, 95%, 58%);
+  padding: .8rem;
+  border-radius: 0.5rem;
+  margin-left: 5rem;
+  box-shadow: .6rem .3rem .6rem hsl(36, 90%, 53%);
+}
+
+.search i{
+  font-size: 1.8rem;
+  color: hsl(36, 88%, 90%);;
+}
+
+.search input{
+  color: hsl(36,80%,95%);
+  background: hsl(36, 95%, 58%);
+  width: 42vw;
+  height: 2.5rem;
+  margin: 0 0.5rem 0 0.5rem;
+  border: none;
+  outline: none;
+  font-size: 2rem;
+  padding: 1rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* ===== MEDIA QUERIES ===== */
 
@@ -358,7 +431,7 @@ a:hover {
 
   .shop-nav-list{
     position:absolute;
-    top: 6vh;
+    top: 8vh;
     right: 0;
     width:40vw;
     height:98vh;

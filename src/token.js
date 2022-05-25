@@ -6,12 +6,12 @@ const acessSecret = process.env.ACESS_SECRET
 const refreshSecret = process.env.REFRESH_SECRET
 
 const creatAcessToken = (id,role) =>{
-    const acessToken = jwt.sign({id: id, role: role}, acessSecret, { expiresIn: "4s" })
+    const acessToken = jwt.sign({id: id, role: role}, acessSecret, { expiresIn: "10m" })
     return acessToken
 }
 
 const creatRefreshToken = async(id,role,tokenNum) =>{
-    const refreshToken = jwt.sign({id: id, role: role, num: tokenNum}, refreshSecret, { expiresIn: "8s" })
+    const refreshToken = jwt.sign({id: id, role: role, num: tokenNum}, refreshSecret, { expiresIn: "7d" })
     await db.query(`UPDATE users SET refreshtokens= refreshtokens || '{${refreshToken}}' WHERE id=${id}`)
     return refreshToken
 }
